@@ -6,10 +6,9 @@ home_screen = tk.Tk()
 hasEnded = False
 
 # Variable to keep track of the current player (X or O)
-current_player = "X"
+current_player = 'X'
 # 2D list to store buttons
 labels = [[None for _ in range(3)] for _ in range(3)]
-
 
 ##################################################################### Human Players ###################################################################
 # Function to open the Tic Tac Toe game page
@@ -55,7 +54,7 @@ def open_tic_tac_toe():
         flag = 0
         for i in range(3):
             for j in range(3):
-                if labels[i][j]["text"] == "":
+                if labels[i][j]['text'] == "":
                     flag = 1
         if flag == 0:
             header_label.config(text=f"Draw")
@@ -67,27 +66,27 @@ def open_tic_tac_toe():
         global hasEnded
         if hasEnded == False:
             # Check if the button is empty (text is "")
-            if labels[row][col]["text"] == "":
+            if labels[row][col]['text'] == "":
                 # Set the text of the button to the current player
-                labels[row][col]["text"] = current_player
+                labels[row][col]['text'] = current_player
 
-                labels[row][col]["font"] = ("Helvetica", 24)  # Customize the font size
-                if current_player == "X":
-                    labels[row][col]["fg"] = "blue"  # Customize the color for 'X'
+                labels[row][col]['font'] = ('Helvetica', 24)  # Customize the font size
+                if current_player == 'X':
+                    labels[row][col]['fg'] = 'blue'  # Customize the color for 'X'
                 else:
-                    labels[row][col]["fg"] = "red"  # Customize the color for 'O'
+                    labels[row][col]['fg'] = 'red'  # Customize the color for 'O'
 
                 gameOverCheck()
                 # Toggle the current player for the next turn
-                current_player = "O" if current_player == "X" else "X"
+                current_player = 'O' if current_player == 'X' else 'X'
 
     def resetAll():
         global current_player
         global hasEnded
         for i in range(3):
             for j in range(3):
-                labels[i][j]["text"] = ""
-        current_player = "X"
+                labels[i][j]['text'] = ''
+        current_player = 'X'
         hasEnded = False
         header_label.config(text="Tic Tac Toe")
 
@@ -99,24 +98,16 @@ def open_tic_tac_toe():
     # Create buttons and assign the buttonClick function to them
     for i in range(3):
         for j in range(3):
-            labels[i][j] = tk.Button(
-                game_screen,
-                text="",
-                width=12,
-                height=6,
-                font=("Helvetica", 24),
-                bg="white",
-                command=lambda row=i, col=j: buttonClick(row, col),
-            )
+            labels[i][j] = tk.Button(game_screen, text="", width=12, height=6, font=("Helvetica", 24), bg="white",
+                                     command=lambda row=i, col=j: buttonClick(row, col))
             labels[i][j].grid(row=i + 1, column=j)
 
     game_screen.title("Tic Tac Toe")
 
     def on_closing_game_screen():
         exit(0)
-
     game_screen.protocol("WM_DELETE_WINDOW", on_closing_game_screen)
-
+    
     game_screen.mainloop()
     # You can add a "Back" button in the Tic Tac Toe game page to return to the homepage if needed.
 
@@ -124,12 +115,10 @@ def open_tic_tac_toe():
 ##################################################################### AI ###################################################################
 
 # Variable to keep track of the current player (X or O)
-current_player2 = "X"
+current_player2 = 'X'
 
-hasEnded2 = False
+hasEnded2=False
 labels2 = [[None for _ in range(3)] for _ in range(3)]
-
-
 def open_tic_tac_toe_ai():
     global hasEnded2
     global current_player2
@@ -149,23 +138,22 @@ def open_tic_tac_toe_ai():
             if board[0][col] == board[1][col] == board[2][col] == player:
                 return True
 
-        if all(board[i][i] == player for i in range(3)) or all(
-            board[i][2 - i] == player for i in range(3)
-        ):
+        if all(board[i][i] == player for i in range(3)) or \
+                all(board[i][2 - i] == player for i in range(3)):
             return True
 
         return False
 
     def is_full(board):
         # Check if the board is full
-        return all(board[row][col] != "" for row in range(3) for col in range(3))
+        return all(board[row][col] != '' for row in range(3) for col in range(3))
 
     def evaluate(board):
         # Check for a win or a tie and return a score
         # Positive score for AI win, negative for human win, 0 for a tie
-        if is_winner(board, "0"):
+        if is_winner(board, '0'):
             return 1
-        elif is_winner(board, "X"):
+        elif is_winner(board, 'X'):
             return -1
         elif is_full(board):
             return 0
@@ -176,25 +164,30 @@ def open_tic_tac_toe_ai():
         # Base case: return the evaluation score if the game is over
         score = evaluate(board)
         if score is not None:
-            return score
+            if score == 10:
+                return 10 - depth
+            elif score == -10:
+                return -10 + depth
+            else:
+                return score
 
         if is_maximizer:
-            best_score = -float("inf")
+            best_score = -float('inf')
             for move in available_moves(board):
-                board[move[0]][move[1]] = "0"
+                board[move[0]][move[1]] = '0'
                 score = minimax(board, depth + 1, alpha, beta, False)
-                board[move[0]][move[1]] = ""  # Undo the move
+                board[move[0]][move[1]] = ''  # Undo the move
                 best_score = max(score, best_score)
                 alpha = max(alpha, best_score)
                 if beta <= alpha:
                     break  # Prune the rest of the subtree
             return best_score
         else:
-            best_score = float("inf")
+            best_score = float('inf')
             for move in available_moves(board):
-                board[move[0]][move[1]] = "X"
+                board[move[0]][move[1]] = 'X'
                 score = minimax(board, depth + 1, alpha, beta, True)
-                board[move[0]][move[1]] = ""  # Undo the move
+                board[move[0]][move[1]] = ''  # Undo the move
                 best_score = min(score, best_score)
                 beta = min(beta, best_score)
                 if beta <= alpha:
@@ -203,14 +196,14 @@ def open_tic_tac_toe_ai():
 
     def find_best_move(board):
         best_move = None
-        best_score = -float("inf")
-        alpha = -float("inf")
-        beta = float("inf")
+        best_score = -float('inf')
+        alpha = -float('inf')
+        beta = float('inf')
 
         for move in available_moves(board):
-            board[move[0]][move[1]] = "0"
+            board[move[0]][move[1]] = '0'
             score = minimax(board, 0, alpha, beta, False)
-            board[move[0]][move[1]] = ""  # Undo the move
+            board[move[0]][move[1]] = ''  # Undo the move
             if score > best_score:
                 best_score = score
                 best_move = move
@@ -221,7 +214,7 @@ def open_tic_tac_toe_ai():
         moves = []
         for i in range(3):
             for j in range(3):
-                if board[i][j] == "":
+                if board[i][j] == '':
                     moves.append((i, j))
 
         return moves
@@ -232,11 +225,7 @@ def open_tic_tac_toe_ai():
         # row check
         for i in range(3):
             if labels2[i][0]["text"] != "":
-                if (
-                    labels2[i][0]["text"]
-                    == labels2[i][1]["text"]
-                    == labels2[i][2]["text"]
-                ):
+                if labels2[i][0]["text"] == labels2[i][1]["text"] == labels2[i][2]["text"]:
                     hasEnded2 = True
                     header_label.config(text=f"Winner: {labels2[i][0]['text']}")
                     return
@@ -244,11 +233,7 @@ def open_tic_tac_toe_ai():
         # column check
         for i in range(3):
             if labels2[0][i]["text"] != "":
-                if (
-                    labels2[0][i]["text"]
-                    == labels2[1][i]["text"]
-                    == labels2[2][i]["text"]
-                ):
+                if labels2[0][i]["text"] == labels2[1][i]["text"] == labels2[2][i]["text"]:
                     hasEnded2 = True
                     header_label.config(text=f"Winner: {labels2[0][i]['text']}")
                     return
@@ -268,7 +253,7 @@ def open_tic_tac_toe_ai():
         flag = 0
         for i in range(3):
             for j in range(3):
-                if labels2[i][j]["text"] == "":
+                if labels2[i][j]['text'] == "":
                     flag = 1
         if flag == 0:
             header_label.config(text=f"Draw")
@@ -280,18 +265,18 @@ def open_tic_tac_toe_ai():
         global hasEnded2
         if hasEnded2 == False:
             # Check if the button is empty (text is "")
-            if labels2[row][col]["text"] == "":
+            if labels2[row][col]['text'] == "":
                 # Set the text of the button to the current player
-                labels2[row][col]["text"] = "X"
+                labels2[row][col]['text'] = 'X'
 
-                board = [["" for _ in range(3)] for _ in range(3)]
+                board = [['' for _ in range(3)] for _ in range(3)]
                 for i in range(3):
                     for j in range(3):
-                        board[i][j] = labels2[i][j]["text"]
+                        board[i][j] = labels2[i][j]['text']
 
                 move = find_best_move(board)
                 if move is not None:  # Check if a valid move was found
-                    labels2[move[0]][move[1]]["text"] = "0"
+                    labels2[move[0]][move[1]]['text'] = '0'
 
                 gameOverCheck()
 
@@ -301,8 +286,8 @@ def open_tic_tac_toe_ai():
         global labels2
         for i in range(3):
             for j in range(3):
-                labels2[i][j]["text"] = ""
-        current_player2 = "X"
+                labels2[i][j]['text'] = ''
+        current_player2 = 'X'
         hasEnded2 = False
         header_label.config(text="Tic Tac Toe")
 
@@ -319,30 +304,22 @@ def open_tic_tac_toe_ai():
     # Create buttons and assign the buttonClick function to them
     for i in range(3):
         for j in range(3):
-            labels2[i][j] = tk.Button(
-                game_screen_ai,
-                text="",
-                width=12,
-                height=6,
-                font=("Helvetica", 24),
-                bg="white",
-                command=lambda row=i, col=j: buttonClick(row, col),
-            )
+            labels2[i][j] = tk.Button(game_screen_ai, text="", width=12, height=6, font=("Helvetica", 24), bg="white",
+                                      command=lambda row=i, col=j: buttonClick(row, col))
             labels2[i][j].grid(row=i + 1, column=j)
 
     def on_closing_game_screen():
         exit(0)
-
     game_screen_ai.protocol("WM_DELETE_WINDOW", on_closing_game_screen)
 
     game_screen_ai.title("Tic Tac Toe")
     game_screen_ai.mainloop()
 
 
+
+
 # Create a label for the homepage
-homepage_label = tk.Label(
-    home_screen, text="Welcome to Tic Tac Toe", font=("Helvetica", 16)
-)
+homepage_label = tk.Label(home_screen, text="Welcome to Tic Tac Toe", font=("Helvetica", 16))
 homepage_label.pack(pady=20)
 
 # Create a button to start the game
@@ -350,9 +327,7 @@ start_button = tk.Button(home_screen, text="Start Game", command=open_tic_tac_to
 start_button.pack()
 
 # Create a button to start the game
-start_button_ai = tk.Button(
-    home_screen, text="Start Game AI", command=open_tic_tac_toe_ai
-)
+start_button_ai = tk.Button(home_screen, text="Start Game AI", command=open_tic_tac_toe_ai)
 start_button_ai.pack()
 
 home_screen.title("Homepage")
