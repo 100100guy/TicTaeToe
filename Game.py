@@ -152,9 +152,9 @@ def open_tic_tac_toe_ai():
         # Check for a win or a tie and return a score
         # Positive score for AI win, negative for human win, 0 for a tie
         if is_winner(board, '0'):
-            return 1
+            return 10
         elif is_winner(board, 'X'):
-            return -1
+            return -10
         elif is_full(board):
             return 0
         else:
