@@ -1,8 +1,14 @@
 import tkinter as tk
 from tkinter import *
+from tkinter import ttk
+from ttkthemes import ThemedStyle
 
 # Create a tkinter window
 home_screen = tk.Tk()
+# Create a "Start Game" button with a modern theme
+style = ThemedStyle(home_screen)
+style.set_theme("equilux")  # You can try different themes
+
 hasEnded = False
 
 # Variable to keep track of the current player (X or O)
@@ -90,11 +96,19 @@ def open_tic_tac_toe():
         hasEnded = False
         header_label.config(text="Tic Tac Toe")
 
+    def return_to_homepage():
+        resetAll()
+        game_screen.destroy()  # Close the game window
+        home_screen.deiconify()  # Show the homepage window
+
     # Create a label at the top of the board
-    header_label = tk.Label(game_screen, text="Tic Tac Toe", font=("Helvetica", 16))
+    header_label = ttk.Label(game_screen, text="Tic Tac Toe", font=("Helvetica", 16))
     header_label.grid(row=0, column=0, columnspan=3)
-    reset = tk.Button(game_screen, text="Reset", command=resetAll)
+    reset = ttk.Button(game_screen, text="Reset", command=resetAll)
     reset.grid(row=0, column=0)
+    back_button = ttk.Button(game_screen, text="Back to Homepage", command=return_to_homepage)
+    back_button.grid(row=0, column=2)
+
     # Create buttons and assign the buttonClick function to them
     for i in range(3):
         for j in range(3):
@@ -151,7 +165,7 @@ def open_tic_tac_toe_ai():
     def evaluate(board):
         # Check for a win or a tie and return a score
         # Positive score for AI win, negative for human win, 0 for a tie
-        if is_winner(board, '0'):
+        if is_winner(board, 'O'):
             return 10
         elif is_winner(board, 'X'):
             return -10
@@ -174,7 +188,7 @@ def open_tic_tac_toe_ai():
         if is_maximizer:
             best_score = -float('inf')
             for move in available_moves(board):
-                board[move[0]][move[1]] = '0'
+                board[move[0]][move[1]] = 'O'
                 score = minimax(board, depth + 1, alpha, beta, False)
                 board[move[0]][move[1]] = ''  # Undo the move
                 best_score = max(score, best_score)
@@ -201,7 +215,7 @@ def open_tic_tac_toe_ai():
         beta = float('inf')
 
         for move in available_moves(board):
-            board[move[0]][move[1]] = '0'
+            board[move[0]][move[1]] = 'O'
             score = minimax(board, 0, alpha, beta, False)
             board[move[0]][move[1]] = ''  # Undo the move
             if score > best_score:
@@ -268,6 +282,8 @@ def open_tic_tac_toe_ai():
             if labels2[row][col]['text'] == "":
                 # Set the text of the button to the current player
                 labels2[row][col]['text'] = 'X'
+                labels2[row][col]['font'] = ('Helvetica', 24)  # Customize the font size
+                labels2[row][col]['fg'] = 'blue'  # Customize the color for 'X'
 
                 board = [['' for _ in range(3)] for _ in range(3)]
                 for i in range(3):
@@ -276,7 +292,10 @@ def open_tic_tac_toe_ai():
 
                 move = find_best_move(board)
                 if move is not None:  # Check if a valid move was found
-                    labels2[move[0]][move[1]]['text'] = '0'
+
+                    labels2[move[0]][move[1]]['text'] = 'O'
+                    labels2[move[0]][move[1]]['font'] = ('Helvetica', 24)  # Customize the color for 'O'
+                    labels2[move[0]][move[1]]['fg'] = 'red'  # Customize the color for 'O'
 
                 gameOverCheck()
 
@@ -291,15 +310,23 @@ def open_tic_tac_toe_ai():
         hasEnded2 = False
         header_label.config(text="Tic Tac Toe")
 
+    def return_to_homepage():
+        resetAll()
+        game_screen_ai.destroy()  # Close the game window
+        home_screen.deiconify()  # Show the homepage window
+
     # Create a 2D list to store buttons
     labels2 = [[None for _ in range(3)] for _ in range(3)]
 
     # Create a label at the top of the board
-    header_label = tk.Label(game_screen_ai, text="Tic Tac Toe", font=("Helvetica", 16))
+    header_label = ttk.Label(game_screen_ai, text="Tic Tac Toe", font=("Helvetica", 16))
     header_label.grid(row=0, column=0, columnspan=3)
 
-    reset = tk.Button(game_screen_ai, text="Reset", command=resetAll)
+    reset = ttk.Button(game_screen_ai, text="Reset", command=resetAll)
     reset.grid(row=0, column=0)
+
+    back_button = ttk.Button(game_screen_ai, text="Back to Homepage", command=return_to_homepage)
+    back_button.grid(row=0, column=2)
 
     # Create buttons and assign the buttonClick function to them
     for i in range(3):
@@ -316,19 +343,21 @@ def open_tic_tac_toe_ai():
     game_screen_ai.mainloop()
 
 
-
-
 # Create a label for the homepage
-homepage_label = tk.Label(home_screen, text="Welcome to Tic Tac Toe", font=("Helvetica", 16))
+homepage_label = ttk.Label(home_screen, text="Welcome to Tic Tac Toe", font=("Helvetica", 30), background='' )
 homepage_label.pack(pady=20)
 
 # Create a button to start the game
-start_button = tk.Button(home_screen, text="Start Game", command=open_tic_tac_toe)
-start_button.pack()
+start_button = ttk.Button(home_screen, text="Start Game", command=open_tic_tac_toe)
+start_button.pack(pady=10)
 
 # Create a button to start the game
-start_button_ai = tk.Button(home_screen, text="Start Game AI", command=open_tic_tac_toe_ai)
+start_button_ai = ttk.Button(home_screen, text="Start Game AI", command=open_tic_tac_toe_ai)
 start_button_ai.pack()
+# Set a background color for the home screen
+home_screen.configure(bg="grey")
+# Set the window size and title
+home_screen.geometry("800x600")
 
 home_screen.title("Homepage")
 home_screen.mainloop()
